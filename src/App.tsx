@@ -31,10 +31,22 @@ export default function App() {
   const [showResult, setShowResult] = useState(false);
   const [filterCategory, setFilterCategory] = useState<GrammarCategory | 'All'>('All');
 
+  // Shuffle function
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   const filteredQuestions = useMemo(() => {
-    if (filterCategory === 'All') return QUESTION_BANK;
-    return QUESTION_BANK.filter(q => q.category === filterCategory);
-  }, [filterCategory]);
+    const base = filterCategory === 'All' 
+      ? QUESTION_BANK 
+      : QUESTION_BANK.filter(q => q.category === filterCategory);
+    return shuffleArray(base);
+  }, [filterCategory, showResult === false && currentIndex === 0]); // Re-shuffle on reset or filter change
 
   const currentQuestion = filteredQuestions[currentIndex];
 
